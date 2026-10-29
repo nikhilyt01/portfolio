@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Nikhil Kumar Singh | Space Portfolio</title>
+<style>
+:root{--pw:min(110vw,150vh);--vis:calc(var(--pw)*.36);--glow:#b9a6ff;--vio:#7c5cff;
+  --hd:"Bahnschrift","Oswald","Arial Narrow","Impact",sans-serif;--bd:"Segoe UI","Helvetica Neue",Arial,sans-serif}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-snap-type:y mandatory;scroll-behavior:smooth;background:#050a26}
+body{font-family:var(--bd);color:#fff;overflow-x:hidden}
+button,input,textarea{font:inherit;color:inherit}
+:focus-visible{outline:2px solid #fff;outline-offset:3px}
+
+/* ---------- fixed space backdrop ---------- */
+.bg{position:fixed;inset:0;z-index:0;overflow:hidden}
+.sky{position:absolute;inset:0;opacity:0;transition:opacity 1.2s}
+.sky:nth-child(1){background:linear-gradient(#150a33,#3a1778 60%,#5a2aa0)}
+.sky:nth-child(2){background:linear-gradient(#34331a,#6f6e30 45%,#82526f)}
+.sky:nth-child(3){background:linear-gradient(#070a22,#1b2a6b 60%,#1f5a78)}
+.sky:nth-child(4){background:linear-gradient(#1a0d4a,#3d1d86 70%,#5a2d9c)}
+.sky:nth-child(5){background:linear-gradient(#050a26,#0d1b55 70%,#13307a)}
+body[data-s="0"] .sky:nth-child(1),body[data-s="1"] .sky:nth-child(2),body[data-s="2"] .sky:nth-child(3),
+body[data-s="3"] .sky:nth-child(4),body[data-s="4"] .sky:nth-child(5){opacity:1}
+#stars{position:absolute;inset:0;width:100%;height:100%}
+.moon{position:absolute;top:6vh;left:5vw;width:min(18vw,170px);aspect-ratio:1;border-radius:50%;
+  background:radial-gradient(circle at 35% 35%,rgba(255,255,255,.25),rgba(140,110,255,.15) 60%,transparent 72%);filter:blur(1px)}
+.rocks{position:absolute;left:-3%;bottom:0;width:106%;height:80%;color:#120a2e;transition:color 1.2s;
+  transform:translate(calc(var(--mx,0)*-16px),calc(var(--my,0)*-8px))}
+.rocks.far{color:#2a1b5c;opacity:.7;transform:translate(calc(var(--mx,0)*-7px),0)}
+body[data-s="1"] .rocks{color:#2a2410}body[data-s="1"] .rocks.far{color:#5c5a2a}
+body[data-s="2"] .rocks{color:#080a22}body[data-s="2"] .rocks.far{color:#1a2358}
+body[data-s="4"] .rocks{color:#060b2a}body[data-s="4"] .rocks.far{color:#14236a}
+.planet{position:absolute;left:50%;bottom:0;width:var(--pw);aspect-ratio:1;border-radius:50%;
+  transform:translate(-50%,64%);
+  background:radial-gradient(ellipse 14% 9% at 38% 20%,#5fa968 0 60%,transparent 62%),
+    radial-gradient(ellipse 18% 8% at 60% 14%,#4f9a66 0 60%,transparent 62%),
+    radial-gradient(ellipse 10% 6% at 50% 26%,#7cc7a0 0 60%,transparent 62%),
+    radial-gradient(circle at 50% 8%,#37b8ff,#1f6be0 45%,#1b3f9a 75%);
+  box-shadow:0 0 60px 8px rgba(80,200,255,.65),0 0 160px 30px rgba(60,120,255,.4),inset 0 20px 60px rgba(160,240,255,.5);
+  animation:spin 60s linear infinite}
+@keyframes spin{50%{filter:hue-rotate(12deg)}}
+.astro{position:absolute;left:50%;bottom:calc(var(--vis) - 6px);width:clamp(60px,9vw,96px);margin-left:calc(clamp(60px,9vw,96px)/-2);
+  animation:bob 4.5s ease-in-out infinite}
+@keyframes bob{50%{transform:translateY(-10px) rotate(3deg)}}
+
+/* ---------- fixed UI ---------- */
+.top,.hint,.social{position:fixed;z-index:10}
+.top{top:18px;right:26px;font:700 1.05rem var(--hd);letter-spacing:.04em;text-decoration:none;color:#fff}
+.top:hover{color:var(--glow)}
+.social{left:26px;top:50%;transform:translateY(-50%);display:flex;flex-direction:column;gap:14px}
+.ic{width:30px;height:30px;border-radius:8px;background:rgba(185,166,255,.85);color:#1a1050;display:grid;place-items:center;
+  font:800 .8rem var(--hd);text-decoration:none;transition:transform .2s,background .2s}
+.ic:hover{transform:translateY(-3px) scale(1.1);background:#fff}
+.ic svg{width:17px;height:17px;fill:currentColor}
+.hint{bottom:22px;display:flex;align-items:center;gap:10px;font:700 .85rem var(--hd);letter-spacing:.08em;
+  background:none;border:0;cursor:pointer}
+.hint i{width:34px;height:34px;border:2px solid var(--glow);border-radius:8px;display:grid;place-items:center;
+  font-style:normal;transition:.2s}
+.hint:hover i{background:var(--glow);color:#1a1050}
+#hEnter{left:26px}#hScroll{right:26px;flex-direction:row-reverse}
+
+/* ---------- scenes ---------- */
+.scene{position:relative;z-index:1;height:100vh;height:100svh;scroll-snap-align:start;scroll-snap-stop:always;
+  display:flex;flex-direction:column;align-items:center;padding-top:9vh;text-align:center}
+.ttl{display:inline-block;max-width:92vw;font:800 clamp(2rem,6.4vw,4.6rem)/1 var(--hd);text-transform:uppercase;letter-spacing:.02em;
+  -webkit-text-stroke:1.6px #c8bbff;color:rgba(124,92,255,.2);text-shadow:0 0 22px rgba(150,120,255,.6);
+  padding:10px 26px;border-top:4px double var(--glow);border-bottom:4px double var(--glow)}
+.kick{font:700 .8rem var(--hd);letter-spacing:.2em;color:var(--glow);margin-bottom:10px}
+.sub{font:800 clamp(1.3rem,3.2vw,2.3rem)/1.1 var(--hd);text-transform:uppercase;margin-top:4vh;transition:opacity .3s}
+.sub2{font:600 clamp(.8rem,1.5vw,1rem) var(--hd);letter-spacing:.06em;margin-top:8px;color:#e6defe;text-transform:uppercase}
+.hero .big{font:800 clamp(2.4rem,7vw,5.4rem)/1 var(--hd);-webkit-text-stroke:1.4px #d4c9ff;color:rgba(255,255,255,.1);
+  text-shadow:0 0 26px rgba(160,130,255,.8);margin-top:3vh;text-transform:uppercase}
+.tag{margin-top:12px;color:#e6defe;font-size:clamp(.9rem,1.8vw,1.15rem)}
+
+/* click-to-open + panel */
+.prompt{position:absolute;left:50%;bottom:calc(var(--vis)*.38);transform:translateX(-50%);background:none;border:0;cursor:pointer;
+  font:800 1.5rem/1.1 var(--hd);letter-spacing:.04em;-webkit-text-stroke:1px #d4c9ff;color:rgba(255,255,255,.12);
+  text-shadow:0 0 14px rgba(190,170,255,.9);padding:16px 22px;transition:opacity .3s;animation:pulse 2s infinite}
+.prompt::before,.prompt::after,.panel::before,.panel::after{content:"";position:absolute;width:24px;height:24px;border:0 solid var(--glow)}
+.prompt::before,.panel::before{left:0;top:0;border-width:3px 0 0 3px}
+.prompt::after,.panel::after{right:0;bottom:0;border-width:0 3px 3px 0}
+@keyframes pulse{50%{transform:translateX(-50%) scale(1.06)}}
+.panel{position:absolute;left:50%;bottom:calc(var(--vis)*.1);width:min(680px,88vw);max-height:calc(var(--vis)*.8 + 4vh);overflow:auto;
+  transform:translateX(-50%) translateY(30px) scale(.94);opacity:0;pointer-events:none;transition:.45s cubic-bezier(.2,.9,.3,1.2);
+  padding:22px 28px;border:1px solid rgba(185,166,255,.7);background:rgba(10,12,50,.55);backdrop-filter:blur(8px);
+  font-size:.95rem;line-height:1.55;text-align:left}
+.panel ul{padding-left:18px}.panel li{margin-bottom:6px}
+.panel .tags{margin-top:10px;font:700 .8rem var(--hd);letter-spacing:.08em;color:var(--glow)}
+.links{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}
+.links a{background:var(--vio);color:#fff;text-decoration:none;padding:8px 16px;font:700 .85rem var(--hd);letter-spacing:.06em;
+  text-transform:uppercase;box-shadow:0 4px 0 #4a33b8;transition:transform .15s,box-shadow .15s}
+.links a:hover{transform:translateY(2px);box-shadow:0 2px 0 #4a33b8}
+.scene.open .prompt{opacity:0;pointer-events:none;animation:none}
+.scene.open .panel{opacity:1;transform:translateX(-50%);pointer-events:auto}
+
+/* carousel arrows */
+.arr{position:absolute;top:50%;width:46px;height:64px;background:none;border:0;cursor:pointer;color:#a99bff;transition:transform .2s,color .2s}
+.arr svg{width:100%;height:100%;fill:currentColor;filter:drop-shadow(0 0 10px #7c5cff)}
+.arr:hover{color:#fff;transform:scale(1.15)}
+.arr.l{left:7vw}.arr.r{right:7vw}.arr.r svg{transform:scaleX(-1)}
+.cnt{font:700 .8rem var(--hd);letter-spacing:.2em;color:var(--glow);margin-top:10px}
+
+/* skills: 3D bricks driven by a tiny physics loop */
+.field{position:relative;margin:calc(3.5vh + 10px) auto 0;touch-action:pan-y;user-select:none}
+.tile{position:absolute;display:grid;place-items:center;text-align:center;line-height:1.1;padding:0 4px;font-weight:700;
+  color:#fff;text-shadow:0 1px 2px rgba(0,0,0,.5);cursor:pointer;will-change:transform;
+  background:linear-gradient(145deg,hsl(var(--h) 85% 62%),hsl(var(--h) 70% 38%));border:1px solid rgba(255,255,255,.35);
+  opacity:0;transition:opacity .5s calc(var(--i)*50ms),filter .15s}
+.tile::before{content:"";position:absolute;left:0;bottom:100%;width:100%;height:var(--d);background:hsl(var(--h) 90% 76%);
+  transform-origin:0 100%;transform:skewX(-45deg)}
+.tile::after{content:"";position:absolute;left:100%;top:0;width:var(--d);height:100%;background:hsl(var(--h) 65% 26%);
+  transform-origin:0 0;transform:skewY(-45deg)}
+.tile.hit{filter:brightness(1.5) drop-shadow(0 0 10px #fff)}
+body[data-s="1"] .tile{opacity:1}
+.score{margin-top:calc(var(--d,10px) + 12px);font:700 .85rem var(--hd);letter-spacing:.14em;color:var(--glow)}
+.score small{display:block;margin-top:4px;font-size:.72rem;letter-spacing:.1em;color:#e6defe;opacity:.85}
+
+/* contact */
+form{display:grid;grid-template-columns:auto minmax(0,1fr);gap:14px 14px;align-items:start;width:min(640px,88vw);margin-top:5vh;text-align:left}
+label{font:700 .95rem var(--hd);letter-spacing:.05em;padding-top:8px;text-align:right}
+input,textarea{width:100%;background:rgba(140,120,255,.35);border:1px solid rgba(185,166,255,.5);padding:9px 12px;font-size:.9rem;resize:vertical}
+input::placeholder,textarea::placeholder{color:rgba(255,255,255,.55)}
+textarea{min-height:110px}
+.send{grid-column:2;background:var(--vio);border:0;padding:11px;font:800 .85rem var(--hd);letter-spacing:.14em;cursor:pointer;box-shadow:0 5px 0 #4a33b8}
+.send:hover{background:#9279ff}
+#msg{grid-column:2;font-size:.85rem;color:var(--glow);min-height:1.2em}
+.row{display:flex;gap:16px;margin-top:2vh}
+.back{position:absolute;top:18px;left:26px;font:700 .95rem var(--hd);color:#fff;text-decoration:none}
+.phone{margin-top:1.4vh;font-size:.85rem;color:#d5ccff}
+
+@media(max-width:700px){
+  .social{display:none}.arr.l{left:2vw}.arr.r{right:2vw}.arr{width:34px;height:48px}
+  #hEnter{display:none}label{text-align:left;grid-column:1/-1;padding:0}
+  form{grid-template-columns:1fr}.send,#msg{grid-column:1}
+}
+@media(max-height:560px){.scene{padding-top:5vh}.ttl{font-size:clamp(1.4rem,4.5vw,2.4rem)}.sub{margin-top:2vh}.prompt{font-size:1.1rem}}
+@media(max-width:420px){.ttl{padding:8px 14px}.panel{padding:16px 18px;font-size:.88rem}.top{font-size:.9rem;right:14px}.back{left:14px}.hint{bottom:14px}#hScroll{right:14px}}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}html{scroll-behavior:auto}.tile{opacity:1}}
+</style>
+</head>
+<body data-s="0">
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+  <symbol id="gh" viewBox="0 0 24 24"><path d="M12 .3a12 12 0 0 0-3.8 23.4c.6.1.8-.3.8-.6v-2c-3.3.7-4-1.6-4-1.6-.6-1.4-1.4-1.8-1.4-1.8-1-.7.1-.7.1-.7 1.2.1 1.9 1.2 1.9 1.2 1 1.8 2.8 1.3 3.5 1 .1-.8.4-1.3.7-1.6-2.700-.3-5.500-1.300-5.500-5.900 0-1.300.5-2.400 1.200-3.200-.1-.3-.5-1.500.1-3.200 0 0 1-.3 3.300 1.200a11.500 11.500 0 0 1 6 0c2.300-1.500 3.300-1.200 3.300-1.200.7 1.700.3 2.900.1 3.200.8.8 1.200 1.900 1.200 3.200 0 4.600-2.800 5.600-5.500 5.900.4.400.8 1.100.8 2.200v3.300c0 .3.2.7.8.6A12 12 0 0 0 12 .3"/></symbol>
+  <symbol id="tri" viewBox="0 0 40 60"><path d="M36 4 6 30l30 26z"/></symbol>
+</defs></svg>
+
+<div class="bg" aria-hidden="true">
+  <div class="sky"></div><div class="sky"></div><div class="sky"></div><div class="sky"></div><div class="sky"></div>
+  <canvas id="stars"></canvas>
+  <div class="moon"></div>
+  <svg class="rocks far" viewBox="0 0 1440 600" preserveAspectRatio="none"><g fill="currentColor">
+    <polygon points="0,600 40,260 110,200 170,300 200,600"/><polygon points="300,600 340,380 400,330 450,600"/>
+    <polygon points="980,600 1020,330 1090,270 1150,600"/><polygon points="1250,600 1290,220 1350,170 1440,320 1440,600"/></g></svg>
+  <svg class="rocks" viewBox="0 0 1440 600" preserveAspectRatio="none"><g fill="currentColor">
+    <polygon points="0,600 0,330 70,250 120,400 160,600"/><polygon points="170,600 230,440 290,420 330,600"/>
+    <polygon points="1060,600 1110,470 1170,450 1210,600"/><polygon points="1290,600 1330,300 1380,210 1440,260 1440,600"/></g></svg>
+  <div class="planet"></div>
+  <svg class="astro" viewBox="0 0 80 110">
+    <rect x="12" y="38" width="16" height="36" rx="6" fill="#c9cde0"/>
+    <rect x="22" y="34" width="38" height="46" rx="14" fill="#fff"/>
+    <rect x="30" y="52" width="14" height="10" rx="3" fill="#ff9a3c"/>
+    <rect x="18" y="76" width="16" height="28" rx="7" fill="#fff"/><rect x="46" y="76" width="16" height="28" rx="7" fill="#fff"/>
+    <rect x="10" y="98" width="26" height="9" rx="4" fill="#9aa0c4"/><rect x="44" y="98" width="26" height="9" rx="4" fill="#9aa0c4"/>
+    <rect x="56" y="40" width="12" height="32" rx="6" fill="#fff"/>
+    <circle cx="40" cy="26" r="22" fill="#fff"/><ellipse cx="42" cy="26" rx="15" ry="13" fill="#1b1550"/>
+    <ellipse cx="37" cy="21" rx="5" ry="3" fill="#7c8cff" opacity=".8"/></svg>
+</div>
+
+<a class="top" href="#contact">CONTACT ME</a>
+<nav class="social" aria-label="Social links">
+  <a class="ic" href="https://github.com/nikhilyt01" target="_blank" rel="noopener" aria-label="GitHub"><svg><use href="#gh"/></svg></a>
+  <a class="ic" href="https://linkedin.com/in/nikhil-kumar-singh-96" target="_blank" rel="noopener" aria-label="LinkedIn">in</a>
+  <a class="ic" href="mailto:nikhil0808yt@gmail.com" aria-label="Email">@</a>
+  <a class="ic" href="https://infrareport-nu.vercel.app/en" target="_blank" rel="noopener" aria-label="InfraReport live">IR</a>
+</nav>
+<button class="hint" id="hEnter" aria-label="Open details">PRESS <i>&#9166;</i></button>
+<button class="hint" id="hScroll" aria-label="Next section">SCROLL <i>&#8595;</i></button>
+
+<!-- 0 HERO -->
+<section class="scene hero" id="home">
+  <div class="kick">A MESSAGE FROM EARTH</div>
+  <h1 class="ttl">Hello fellow galaxy member</h1>
+  <div class="big">I am Nikhil</div>
+  <p class="tag">Full-stack &amp; cloud developer · Real-time apps · AI</p>
+  <button class="prompt">CLICK<br>TO OPEN</button>
+  <div class="panel">
+    <p>I'm Nikhil Kumar Singh, a final-year B.Tech CSE student at GEC Bilaspur. I build full-stack web apps with real-time features and AI, and I deploy them on Google Cloud.</p>
+    <p style="margin-top:8px">I led Team4O4 to a Top 7 finish at the Central India Hackathon and have solved 300+ DSA problems.</p>
+    <div class="links"><a href="#projects">See my projects</a><a href="#contact">Contact me</a></div>
+  </div>
+</section>
+
+<!-- 1 SKILLS -->
+<section class="scene" id="skills">
+  <h2 class="ttl">My skills</h2>
+  <p class="sub" style="font-size:clamp(1rem,2.4vw,1.6rem)">Here is a list of some of my skills</p>
+  <div class="field" id="grid"></div>
+  <p class="score"><span id="score">HITS 0</span><small>Hover to scatter the bricks · click or tap to blast</small></p>
+</section>
+
+<!-- 2 PROJECTS -->
+<section class="scene" id="projects">
+  <h2 class="ttl">My projects</h2>
+  <p class="sub" id="pT"></p><p class="sub2" id="pS"></p><p class="cnt" id="pC"></p>
+  <button class="arr l" style="margin-top:-32px" aria-label="Previous project"><svg><use href="#tri"/></svg></button>
+  <button class="arr r" style="margin-top:-32px" aria-label="Next project"><svg><use href="#tri"/></svg></button>
+  <button class="prompt">CLICK<br>TO OPEN</button>
+  <div class="panel"></div>
+</section>
+
+<!-- 3 JOURNEY -->
+<section class="scene" id="journey">
+  <h2 class="ttl">My journey</h2>
+  <p class="sub" id="jT"></p><p class="sub2" id="jS"></p><p class="cnt" id="jC"></p>
+  <button class="arr l" style="margin-top:-32px" aria-label="Previous"><svg><use href="#tri"/></svg></button>
+  <button class="arr r" style="margin-top:-32px" aria-label="Next"><svg><use href="#tri"/></svg></button>
+  <button class="prompt">CLICK<br>TO OPEN</button>
+  <div class="panel"></div>
+</section>
+
+<!-- 4 CONTACT -->
+<section class="scene" id="contact">
+  <a class="back" href="#home">&lt; GO BACK</a>
+  <h2 class="ttl">Contact me</h2>
+  <form id="f">
+    <label for="e">EMAIL :</label><input id="e" type="email" placeholder="you@example.com" required>
+    <label for="s">SUBJECT :</label><input id="s" placeholder="Let's build something" required>
+    <label for="c">CONTENT :</label><textarea id="c" placeholder="Write your message here" required></textarea>
+    <button class="send" type="submit">SUBMIT</button><div id="msg" role="status"></div>
+  </form>
+  <div class="row">
+    <a class="ic" href="https://github.com/nikhilyt01" target="_blank" rel="noopener" aria-label="GitHub"><svg><use href="#gh"/></svg></a>
+    <a class="ic" href="https://linkedin.com/in/nikhil-kumar-singh-96" target="_blank" rel="noopener" aria-label="LinkedIn">in</a>
+    <a class="ic" href="mailto:nikhil0808yt@gmail.com" aria-label="Email">@</a>
+  </div>
+  <p class="phone">nikhil0808yt@gmail.com · +91 9131876103</p>
+</section>
+
+<script>
+(function(){
+var $=function(s,r){return (r||document).querySelector(s)}, $$=function(s,r){return Array.prototype.slice.call((r||document).querySelectorAll(s))};
+var reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+/* skills: 3D bricks with simple physics */
+var skills=["C++","JavaScript","TypeScript","Python","React","Next.js","Node.js","Express.js","MongoDB","Prisma","Tailwind CSS","Socket.io","Docker","Git & GitHub","Google Cloud","TensorFlow.js"];
+var field=$('#grid'),skSc=$('#skills'),tiles=[],score=0,shown=-1,chaos=0,TW,TH,GAP,DEP,P={x:-999,y:-999,vx:0,vy:0,on:false};
+skills.forEach(function(n,i){
+  var d=document.createElement('div');d.className='tile';d.textContent=n;
+  d.style.setProperty('--i',i);d.style.setProperty('--h',225+i*6);field.appendChild(d);
+  tiles.push({el:d,x:0,y:0,vx:0,vy:0,r:0,vr:0,hx:0,hy:0,hit:0});
+});
+function layout(){
+  var fw=Math.min(innerWidth*.92,660);GAP=innerWidth<600?10:14;DEP=innerWidth<600?7:10;
+  TW=Math.floor((fw-DEP-GAP*3)/4);TH=Math.max(34,Math.min(58,Math.floor(innerHeight*.07)));
+  field.style.width=(TW*4+GAP*3+DEP)+'px';field.style.height=(TH*4+GAP*3+DEP)+'px';field.style.setProperty('--d',DEP+'px');
+  tiles.forEach(function(t,i){
+    t.hx=(i%4)*(TW+GAP);t.hy=Math.floor(i/4)*(TH+GAP);
+    var e=t.el.style;e.width=TW+'px';e.height=TH+'px';e.left=t.hx+'px';e.top=t.hy+'px';
+    e.fontSize=Math.max(10,Math.min(15,TW/7.5))+'px';
+    t.x=t.y=t.vx=t.vy=t.r=t.vr=0;t.el.style.transform='';
+  });
+}
+layout();addEventListener('resize',layout);
+function blast(px,py){
+  var fr=field.getBoundingClientRect();
+  tiles.forEach(function(a){
+    var dx=fr.left+a.hx+a.x+TW/2-px,dy=fr.top+a.hy+a.y+TH/2-py,d=Math.hypot(dx,dy)||1;
+    a.vx+=dx/d*(9+Math.random()*9);a.vy+=dy/d*(9+Math.random()*9)-9;a.vr+=(Math.random()-.5)*34;
+  });
+  chaos=170;
+}
+skSc.addEventListener('pointermove',function(e){P.vx=e.clientX-P.x;P.vy=e.clientY-P.y;if(P.x<-900){P.vx=P.vy=0}P.x=e.clientX;P.y=e.clientY;P.on=true});
+skSc.addEventListener('pointerleave',function(){P.on=false;P.x=P.y=-999});
+skSc.addEventListener('pointerup',function(e){if(e.pointerType!=='mouse'){P.on=false;P.x=P.y=-999}});
+skSc.addEventListener('pointercancel',function(){P.on=false;P.x=P.y=-999});
+field.addEventListener('pointerdown',function(e){if(!reduce)blast(e.clientX,e.clientY)});
+var last=0;
+function loop(t){
+  requestAnimationFrame(loop);
+  var dt=Math.min(2,(t-last)/16.67||1);last=t;
+  if(reduce||document.body.dataset.s!=='1')return;
+  var fr=field.getBoundingClientRect(),sr=skSc.getBoundingClientRect(),R=innerWidth<600?75:100,g=chaos>0?.55:0,fric=chaos>0?.995:.93;
+  if(chaos>0)chaos-=dt;
+  tiles.forEach(function(a){
+    var dx=fr.left+a.hx+a.x+TW/2-P.x,dy=fr.top+a.hy+a.y+TH/2-P.y,d=Math.hypot(dx,dy);
+    if(P.on&&d<R){
+      var f=(1-d/R)*3,nx=dx/(d||1),ny=dy/(d||1);
+      a.vx+=nx*f+P.vx*.04;a.vy+=ny*f+P.vy*.04-.2;a.vr+=nx*f*2;
+      if(f>1&&t>a.hit){a.hit=t+600;score++}
+    }
+    if(chaos<=0){a.vx-=a.x*.012*dt;a.vy-=a.y*.012*dt;a.vr-=a.r*.02*dt;if(Math.abs(a.r)>180)a.r-=360*Math.round(a.r/360)}
+    a.vy+=g*dt;a.vx*=fric;a.vy*=fric;a.vr*=.95;
+    a.x+=a.vx*dt;a.y+=a.vy*dt;a.r+=a.vr*dt;
+    var x0=sr.left-fr.left-a.hx+4,x1=sr.right-fr.left-a.hx-TW-DEP-4,y0=sr.top-fr.top-a.hy+DEP+4,y1=sr.bottom-fr.top-a.hy-TH-4;
+    if(a.x<x0){a.x=x0;a.vx*=-.7}if(a.x>x1){a.x=x1;a.vx*=-.7}
+    if(a.y<y0){a.y=y0;a.vy*=-.7}if(a.y>y1){a.y=y1;a.vy*=-.65;a.vx*=.97}
+  });
+  for(var i=0;i<tiles.length;i++)for(var j=i+1;j<tiles.length;j++){
+    var a=tiles[i],b=tiles[j],dx=(b.hx+b.x)-(a.hx+a.x),dy=(b.hy+b.y)-(a.hy+a.y),ox=TW-Math.abs(dx),oy=TH-Math.abs(dy);
+    if(ox>0&&oy>0){
+      if(ox<oy){var s=dx<0?-1:1;a.x-=s*ox/2;b.x+=s*ox/2;var tv=a.vx;a.vx=b.vx*.9;b.vx=tv*.9}
+      else{var s2=dy<0?-1:1;a.y-=s2*oy/2;b.y+=s2*oy/2;var tw=a.vy;a.vy=b.vy*.9;b.vy=tw*.9}
+      a.vr+=(Math.random()-.5)*2;b.vr+=(Math.random()-.5)*2;
+    }
+  }
+  tiles.forEach(function(a){
+    a.el.style.transform='translate('+a.x.toFixed(1)+'px,'+a.y.toFixed(1)+'px) rotate('+a.r.toFixed(1)+'deg)';
+    a.el.classList.toggle('hit',t<a.hit-350);
+  });
+  if(score!==shown){shown=score;$('#score').textContent='HITS '+score}
+}
+requestAnimationFrame(loop);
+
+/* carousels */
+var projects=[
+ {t:"InfraReport",s:"AI civic platform · Dec 2025 – Jan 2026",tags:"NEXT.JS · TENSORFLOW.JS · MONGODB",
+  d:["Full-stack civic platform for 1,000+ citizens with a 100% audited action trail across 3 role-based tiers.","TensorFlow.js object detection (COCO-SSD) classifies defects automatically and cuts manual effort by 70%.","MongoDB 2dsphere and Google Maps heat maps find priority zones 3x faster."],
+  l:[["Live site","https://infrareport-nu.vercel.app/en"],["GitHub","https://github.com/nikhilyt01"]]},
+ {t:"Streamify",s:"Language exchange platform · Jan 2026",tags:"MERN · GETSTREAM · SOCKET.IO",
+  d:["Communication platform built on GetStream for global language exchange.","Real-time messaging, group video conferencing and presence indicators.","Scalable backend for concurrent live streams and community features."],
+  l:[["GitHub","https://github.com/nikhilyt01/WORKSPACE/tree/main/Streamify"]]},
+ {t:"Slate.io",s:"Infinite canvas with real-time collaboration · Mar 2026",tags:"NEXT.JS · NODE.JS · WEBSOCKETS · TURBOREPO",
+  d:["High-performance real-time whiteboard in a Turborepo monorepo for faster builds.","Low-latency WebSocket sync for live multi-user cursors and shape edits.","AI sketch improvement and an expression solver turn rough drawings into clean visuals."],
+  l:[["Source code","https://github.com/nikhilyt01/WORKSPACE/tree/main/figma_test/excailRedrawn"],["Demo video","https://github.com/nikhilyt01/WORKSPACE/tree/main/figma_test/excailRedrawn"]]}
+];
+var journey=[
+ {t:"Google Cloud Platform",s:"Dec 2023 – Present · Cloud engineering",tags:"GKE · CLOUD RUN · COMPUTE ENGINE · BIGQUERY · FIRESTORE",
+  d:["100+ hands-on labs on Google Cloud Skills Boost covering cloud infrastructure and IAM.","Deployed containerized MERN workloads on GKE and Cloud Run.","28 skill badges from challenge labs in Compute Engine and BigQuery.","Managed VM resources and set up Cloud Firestore for real-time apps."]},
+ {t:"Team4O4 · CIH Hackathon",s:"Top 7 of 100+ finalist teams",d:["Led Team4O4 to a Top 7 rank at the Central India Hackathon among 100+ finalist teams."]},
+ {t:"Clash of Code 2025",s:"2nd place · GEC Bilaspur",d:["Secured 2nd place among 150+ participants."]},
+ {t:"300+ DSA problems",s:"LeetCode · CodeStudio",d:["Solved 300+ problems and ranked in the top 15% globally."]},
+ {t:"B.Tech in CSE",s:"GEC Bilaspur · 2023 – 2027",d:["CGPA 7.5 / 10.","Coursework: DSA, Operating Systems, Computer Networks, DBMS."]}
+];
+function carousel(id,items,pre,ids){
+  var sc=$('#'+id),i=0,panel=$('.panel',sc);
+  function draw(){
+    var it=items[i];
+    $('#'+ids+'T').textContent=(pre?pre+(i+1)+' : ':'')+it.t;
+    $('#'+ids+'S').textContent=it.s;
+    $('#'+ids+'C').textContent=(i+1)+' / '+items.length;
+    var h='<ul>'+it.d.map(function(x){return '<li>'+x+'</li>'}).join('')+'</ul>';
+    if(it.tags)h+='<div class="tags">'+it.tags+'</div>';
+    if(it.l)h+='<div class="links">'+it.l.map(function(a){return '<a href="'+a[1]+'" target="_blank" rel="noopener">'+a[0]+'</a>'}).join('')+'</div>';
+    panel.innerHTML=h;sc.classList.remove('open');
+  }
+  sc.go=function(d){i=(i+d+items.length)%items.length;draw()};
+  $('.arr.l',sc).onclick=function(){sc.go(-1)};$('.arr.r',sc).onclick=function(){sc.go(1)};
+  draw();
+}
+carousel('projects',projects,'Project ','p');
+carousel('journey',journey,'','j');
+
+/* panels */
+var scenes=$$('.scene'),cur=0;
+function toggle(sc){if(sc&&$('.panel',sc))sc.classList.toggle('open')}
+$$('.prompt').forEach(function(b){b.onclick=function(){toggle(b.closest('.scene'))}});
+$('#hEnter').onclick=function(){toggle(scenes[cur])};
+$('#hScroll').onclick=function(){var n=scenes[Math.min(cur+1,scenes.length-1)];if(cur===scenes.length-1)n=scenes[0];n.scrollIntoView({behavior:'smooth'})};
+addEventListener('keydown',function(e){
+  var tag=(e.target.tagName||'').toLowerCase();if(tag==='input'||tag==='textarea')return;
+  var sc=scenes[cur];
+  if(e.key==='Enter'&&tag!=='a'){toggle(sc)}
+  else if(e.key==='Escape'){sc.classList.remove('open')}
+  else if(e.key==='ArrowRight'&&sc.go){sc.go(1)}
+  else if(e.key==='ArrowLeft'&&sc.go){sc.go(-1)}
+});
+
+/* active scene */
+var io=new IntersectionObserver(function(en){en.forEach(function(x){
+  if(x.isIntersecting){cur=scenes.indexOf(x.target);document.body.dataset.s=cur;
+    $('#hEnter').style.visibility=$('.panel',x.target)?'visible':'hidden'}
+})},{threshold:.55});
+scenes.forEach(function(s){io.observe(s)});
+
+/* parallax */
+if(!reduce)addEventListener('pointermove',function(e){
+  document.body.style.setProperty('--mx',(e.clientX/innerWidth-.5).toFixed(3));
+  document.body.style.setProperty('--my',(e.clientY/innerHeight-.5).toFixed(3));
+});
+
+/* starfield + shooting star */
+var cv=$('#stars'),cx=cv.getContext('2d'),W,H,st=[],sh=null;
+function size(){W=cv.width=innerWidth;H=cv.height=innerHeight;st=[];
+  for(var k=0;k<170;k++)st.push({x:Math.random()*W,y:Math.random()*H*.75,r:Math.random()*1.5+.3,p:Math.random()*6.28,v:Math.random()*.03+.01})}
+function frame(t){
+  cx.clearRect(0,0,W,H);
+  st.forEach(function(s){cx.globalAlpha=.45+.55*Math.sin(s.p+t*s.v*.1);cx.fillStyle='#fff';cx.beginPath();cx.arc(s.x,s.y,s.r,0,6.28);cx.fill()});
+  if(!sh&&Math.random()<.004)sh={x:Math.random()*W*.8,y:Math.random()*H*.3,l:0};
+  if(sh){sh.x+=9;sh.y+=4.5;sh.l++;cx.globalAlpha=1-sh.l/45;cx.strokeStyle='#d9ccff';cx.lineWidth=2;
+    cx.beginPath();cx.moveTo(sh.x,sh.y);cx.lineTo(sh.x-70,sh.y-35);cx.stroke();if(sh.l>45)sh=null}
+  if(!reduce)requestAnimationFrame(frame);
+}
+size();addEventListener('resize',size);requestAnimationFrame(frame);
+
+/* contact form -> opens email app */
+$('#f').addEventListener('submit',function(e){
+  e.preventDefault();
+  var body='From: '+$('#e').value+'\n\n'+$('#c').value;
+  location.href='mailto:nikhil0808yt@gmail.com?subject='+encodeURIComponent($('#s').value)+'&body='+encodeURIComponent(body);
+  $('#msg').textContent='Opening your email app to send this message...';
+});
+})();
+</script>
+</body>
+</html>
