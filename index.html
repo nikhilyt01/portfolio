@@ -3,7 +3,12 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Nikhil Kumar Singh | Space Portfolio</title>
+<title>Nikhil Kumar Singh | Full-Stack & Cloud Developer</title>
+<meta name="description" content="Portfolio of Nikhil Kumar Singh: full-stack developer building real-time and AI-powered web apps on Google Cloud.">
+<meta name="theme-color" content="#050a26">
+<meta property="og:title" content="Nikhil Kumar Singh | Space Portfolio">
+<meta property="og:description" content="Full-stack and cloud developer. InfraReport, Streamify, Slate.io.">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🚀</text></svg>">
 <style>
 :root{--pw:min(110vw,150vh);--vis:calc(var(--pw)*.36);--glow:#b9a6ff;--vio:#7c5cff;
   --hd:"Bahnschrift","Oswald","Arial Narrow","Impact",sans-serif;--bd:"Segoe UI","Helvetica Neue",Arial,sans-serif}
@@ -39,8 +44,10 @@ body[data-s="4"] .rocks{color:#060b2a}body[data-s="4"] .rocks.far{color:#14236a}
     radial-gradient(ellipse 10% 6% at 50% 26%,#7cc7a0 0 60%,transparent 62%),
     radial-gradient(circle at 50% 8%,#37b8ff,#1f6be0 45%,#1b3f9a 75%);
   box-shadow:0 0 60px 8px rgba(80,200,255,.65),0 0 160px 30px rgba(60,120,255,.4),inset 0 20px 60px rgba(160,240,255,.5);
-  animation:spin 60s linear infinite}
-@keyframes spin{50%{filter:hue-rotate(12deg)}}
+  transition:filter 1.2s}
+body[data-s="1"] .planet{filter:hue-rotate(-95deg) saturate(1.2)}
+body[data-s="3"] .planet{filter:hue-rotate(40deg)}
+body[data-s="4"] .planet{filter:hue-rotate(-30deg) brightness(.9)}
 .astro{position:absolute;left:50%;bottom:calc(var(--vis) - 6px);width:clamp(60px,9vw,96px);margin-left:calc(clamp(60px,9vw,96px)/-2);
   animation:bob 4.5s ease-in-out infinite}
 @keyframes bob{50%{transform:translateY(-10px) rotate(3deg)}}
@@ -127,9 +134,30 @@ textarea{min-height:110px}
 .send:hover{background:#9279ff}
 #msg{grid-column:2;font-size:.85rem;color:var(--glow);min-height:1.2em}
 .row{display:flex;gap:16px;margin-top:2vh}
-.back{position:absolute;top:18px;left:26px;font:700 .95rem var(--hd);color:#fff;text-decoration:none}
+.back{position:absolute;top:50px;left:26px;font:700 .95rem var(--hd);color:#fff;text-decoration:none}
 .phone{margin-top:1.4vh;font-size:.85rem;color:#d5ccff}
 
+#boot{position:fixed;inset:0;z-index:200;background:#050a26;display:grid;place-items:center;transition:opacity .7s;cursor:pointer}
+#boot.off{opacity:0;pointer-events:none}
+#bt{font:600 clamp(.75rem,2.4vw,1rem)/1.9 ui-monospace,Consolas,monospace;color:#9dffb0;text-shadow:0 0 8px #3f9;min-width:min(88vw,420px)}
+#bar{position:fixed;top:0;left:0;height:3px;width:0;z-index:50;background:linear-gradient(90deg,#7c5cff,#37b8ff,#ff9a3c)}
+#cur{position:fixed;left:0;top:0;width:22px;height:22px;border:2px solid var(--glow);border-radius:50%;pointer-events:none;z-index:150;opacity:0;transition:width .2s,height .2s,background .2s}
+#cur.big{width:54px;height:54px;background:rgba(124,92,255,.25)}
+.hud{position:fixed;top:18px;left:26px;z-index:10;font:700 .75rem/1.5 var(--hd);letter-spacing:.14em;color:var(--glow)}
+.hud span{display:block;color:#fff;opacity:.7}
+.dots{position:fixed;right:14px;top:50%;transform:translateY(-50%);z-index:10;display:flex;flex-direction:column;gap:14px}
+.dots button{position:relative;width:12px;height:12px;border-radius:50%;border:2px solid var(--glow);background:none;cursor:pointer;transition:.2s}
+.dots button.on{background:var(--glow);box-shadow:0 0 12px var(--glow);transform:scale(1.25)}
+.dots button::before{content:attr(data-l);position:absolute;right:22px;top:50%;transform:translateY(-50%);font:700 .7rem var(--hd);letter-spacing:.1em;opacity:0;pointer-events:none;white-space:nowrap;transition:.2s}
+.dots button:hover::before{opacity:1}
+.caret{display:inline-block;width:2px;height:1em;background:var(--glow);margin-left:3px;vertical-align:-2px;animation:bl 1s steps(1) infinite}
+@keyframes bl{50%{opacity:0}}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:14px;text-align:center}
+.stats b{display:block;font:800 1.5rem var(--hd)}.stats span{font-size:.66rem;letter-spacing:.08em;color:var(--glow);text-transform:uppercase}
+.astro.jump{animation:jump .9s}
+@keyframes jump{40%{transform:translateY(-60px) rotate(180deg)}100%{transform:none}}
+.skip{position:fixed;left:8px;top:-60px;z-index:300;background:#fff;color:#111;padding:8px 14px}.skip:focus{top:8px}
+@media(max-width:700px){.dots,.clock{display:none}.stats b{font-size:1.15rem}}
 @media(max-width:700px){
   .social{display:none}.arr.l{left:2vw}.arr.r{right:2vw}.arr{width:34px;height:48px}
   #hEnter{display:none}label{text-align:left;grid-column:1/-1;padding:0}
@@ -141,6 +169,12 @@ textarea{min-height:110px}
 </style>
 </head>
 <body data-s="0">
+<a class="skip" href="#projects">Skip to projects</a>
+<noscript><p style="position:fixed;z-index:300;top:40%;width:100%;text-align:center">Please enable JavaScript to view this portfolio.</p></noscript>
+<div id="boot"><pre id="bt"></pre></div>
+<div id="bar"></div><div id="cur"></div>
+<div class="hud"><b id="sec">SECTOR 01 · HOME</b><span class="clock" id="clk"></span></div>
+<nav class="dots" id="dots" aria-label="Sections"></nav>
 
 <svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
   <symbol id="gh" viewBox="0 0 24 24"><path d="M12 .3a12 12 0 0 0-3.8 23.4c.6.1.8-.3.8-.6v-2c-3.3.7-4-1.6-4-1.6-.6-1.4-1.4-1.8-1.4-1.8-1-.7.1-.7.1-.7 1.2.1 1.9 1.2 1.9 1.2 1 1.8 2.8 1.3 3.5 1 .1-.8.4-1.3.7-1.6-2.700-.3-5.500-1.300-5.500-5.900 0-1.300.5-2.400 1.200-3.200-.1-.3-.5-1.500.1-3.200 0 0 1-.3 3.300 1.200a11.500 11.500 0 0 1 6 0c2.300-1.500 3.300-1.200 3.300-1.200.7 1.700.3 2.900.1 3.200.8.8 1.200 1.900 1.200 3.200 0 4.600-2.800 5.600-5.500 5.900.4.400.8 1.100.8 2.200v3.300c0 .3.2.7.8.6A12 12 0 0 0 12 .3"/></symbol>
@@ -184,11 +218,14 @@ textarea{min-height:110px}
   <div class="kick">A MESSAGE FROM EARTH</div>
   <h1 class="ttl">Hello fellow galaxy member</h1>
   <div class="big">I am Nikhil</div>
-  <p class="tag">Full-stack &amp; cloud developer · Real-time apps · AI</p>
+  <p class="tag"><span id="role">Full-stack developer</span><i class="caret"></i></p>
   <button class="prompt">CLICK<br>TO OPEN</button>
   <div class="panel">
     <p>I'm Nikhil Kumar Singh, a final-year B.Tech CSE student at GEC Bilaspur. I build full-stack web apps with real-time features and AI, and I deploy them on Google Cloud.</p>
     <p style="margin-top:8px">I led Team4O4 to a Top 7 finish at the Central India Hackathon and have solved 300+ DSA problems.</p>
+    <div class="stats">
+      <div><b data-n="28">28</b><span>Skill badges</span></div><div><b data-n="100" data-s="+">100+</b><span>Cloud labs</span></div>
+      <div><b data-n="300" data-s="+">300+</b><span>DSA solved</span></div><div><b data-n="1000" data-s="+">1,000+</b><span>Citizens reached</span></div></div>
     <div class="links"><a href="#projects">See my projects</a><a href="#contact">Contact me</a></div>
   </div>
 </section>
@@ -237,6 +274,7 @@ textarea{min-height:110px}
     <a class="ic" href="mailto:nikhil0808yt@gmail.com" aria-label="Email">@</a>
   </div>
   <p class="phone">nikhil0808yt@gmail.com · +91 9131876103</p>
+  <p class="phone" style="opacity:.6">© 2026 Nikhil Kumar Singh · Built with HTML, CSS &amp; JS</p>
 </section>
 
 <script>
@@ -355,7 +393,7 @@ carousel('journey',journey,'','j');
 
 /* panels */
 var scenes=$$('.scene'),cur=0;
-function toggle(sc){if(sc&&$('.panel',sc))sc.classList.toggle('open')}
+function toggle(sc){if(sc&&$('.panel',sc)){sc.classList.toggle('open');if(sc.id==='home'&&sc.classList.contains('open'))countUp()}}
 $$('.prompt').forEach(function(b){b.onclick=function(){toggle(b.closest('.scene'))}});
 $('#hEnter').onclick=function(){toggle(scenes[cur])};
 $('#hScroll').onclick=function(){var n=scenes[Math.min(cur+1,scenes.length-1)];if(cur===scenes.length-1)n=scenes[0];n.scrollIntoView({behavior:'smooth'})};
@@ -370,7 +408,7 @@ addEventListener('keydown',function(e){
 
 /* active scene */
 var io=new IntersectionObserver(function(en){en.forEach(function(x){
-  if(x.isIntersecting){cur=scenes.indexOf(x.target);document.body.dataset.s=cur;
+  if(x.isIntersecting){cur=scenes.indexOf(x.target);document.body.dataset.s=cur;mark(cur);
     $('#hEnter').style.visibility=$('.panel',x.target)?'visible':'hidden'}
 })},{threshold:.55});
 scenes.forEach(function(s){io.observe(s)});
@@ -394,6 +432,44 @@ function frame(t){
   if(!reduce)requestAnimationFrame(frame);
 }
 size();addEventListener('resize',size);requestAnimationFrame(frame);
+
+/* boot screen, cursor, roles, dots, HUD, stats */
+var names=["Home","Skills","Projects","Journey","Contact"],dotsEl=$('#dots');
+names.forEach(function(n,i){var b=document.createElement('button');b.dataset.l=n;b.setAttribute('aria-label','Go to '+n);
+  b.onclick=function(){scenes[i].scrollIntoView({behavior:'smooth'})};dotsEl.appendChild(b)});
+function mark(i){
+  $$('#dots button').forEach(function(b,k){b.classList.toggle('on',k===i)});
+  $('#sec').textContent='SECTOR 0'+(i+1)+' · '+names[i].toUpperCase();
+  var a=$('.astro');a.classList.remove('jump');void a.offsetWidth;a.classList.add('jump');
+}
+function countUp(){$$('.stats b').forEach(function(b){var n=+b.dataset.n,sf=b.dataset.s||'',t0=performance.now();
+  (function f(t){var p=Math.min(1,(t-t0)/1200);b.textContent=Math.round(n*(1-Math.pow(1-p,3))).toLocaleString('en-US')+sf;if(p<1)requestAnimationFrame(f)})(t0)})}
+addEventListener('scroll',function(){var h=document.documentElement;$('#bar').style.width=(h.scrollTop/((h.scrollHeight-innerHeight)||1)*100)+'%'},{passive:true});
+function tick(){$('#clk').textContent='IST '+new Date().toLocaleTimeString('en-GB',{timeZone:'Asia/Kolkata'})}tick();setInterval(tick,1000);
+var roles=["Full-stack developer","Cloud engineer on GCP","Real-time web apps","AI-powered products"],ri=0,ci=0,del=false,rl=$('#role');
+function type(){
+  var w=roles[ri];if(reduce){rl.textContent=w;return}
+  rl.textContent=w.slice(0,ci);
+  if(!del&&ci===w.length){del=true;setTimeout(type,1400);return}
+  if(del&&ci===0){del=false;ri=(ri+1)%roles.length}
+  ci+=del?-1:1;setTimeout(type,del?35:70);
+}
+type();
+if(matchMedia('(pointer:fine)').matches&&!reduce){
+  var cu=$('#cur'),tx=0,ty=0,px=0,py=0;
+  addEventListener('pointermove',function(e){tx=e.clientX;ty=e.clientY;cu.style.opacity=1;cu.classList.toggle('big',!!e.target.closest('a,button,.tile,input,textarea'))});
+  (function mv(){px+=(tx-px)*.18;py+=(ty-py)*.18;cu.style.transform='translate('+px+'px,'+py+'px) translate(-50%,-50%)';requestAnimationFrame(mv)})();
+}
+var boot=$('#boot');
+function hideBoot(){boot.classList.add('off');setTimeout(function(){boot.remove()},700)}
+try{
+  if(reduce||sessionStorage.getItem('booted')){boot.remove()}
+  else{
+    var L=["> INITIALIZING NIKHIL.EXE","> LOADING SKILLS ............ OK","> CONNECTING TO GOOGLE CLOUD .. OK","> ENGINES READY. LAUNCHING"],k=0,pre=$('#bt');
+    (function nx(){if(k<L.length){pre.textContent+=L[k++]+'\n';setTimeout(nx,380)}else setTimeout(hideBoot,500)})();
+    boot.onclick=hideBoot;sessionStorage.setItem('booted','1');
+  }
+}catch(e){boot.remove()}
 
 /* contact form -> opens email app */
 $('#f').addEventListener('submit',function(e){
